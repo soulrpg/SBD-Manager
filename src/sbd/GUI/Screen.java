@@ -1,2 +1,7 @@
-package sbd.GUI;public interface Screen {
+package sbd.GUI;
+
+import javax.swing.*;
+
+public interface Screen {
+    public JPanel getPanel();
 }

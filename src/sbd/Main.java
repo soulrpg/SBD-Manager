@@ -1,39 +1,28 @@
 package sbd;
-import java.awt.*;
+import sbd.GUI.Constants;
+import sbd.GUI.LoginScreen;
+import sbd.GUI.Screen;
+
 import javax.swing.*;
-import sbd.GUI.MainWindow;
-/*
-public class Main {
-    Main()
-    {
-        JFrame f= new JFrame("Panel Example");
-        JPanel panel=new JPanel();
-        panel.setBounds(40,80,200,200);
-        panel.setBackground(Color.gray);
-        JButton b1=new JButton("Button 1");
-        b1.setBounds(50,100,80,30);
-        b1.setBackground(Color.yellow);
-        JButton b2=new JButton("Button 2");
-        b2.setBounds(100,100,80,30);
-        b2.setBackground(Color.green);
-        panel.add(b1); panel.add(b2);
-        f.add(panel);
-        f.setSize(400,400);
-        f.setLayout(null);
-        f.setVisible(true);
-    }
-    public static void main(String args[])
-    {
-        new Main();
-    }
-}
-
-*/
 
 public class Main {
-    static private MainWindow mainWindow;
+    static private Screen currentScreen;
+    static private JFrame frame;
+
+    public static void changeScreen(Screen newScreen){
+        currentScreen = newScreen;
+        frame.setContentPane(currentScreen.getPanel());
+        frame.pack();
+        frame.setSize(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+    }
 
     public static void main(String[] args){
-        mainWindow = new MainWindow();
+        currentScreen = new LoginScreen();
+        frame = new JFrame("System baz danych");
+        frame.setContentPane(currentScreen.getPanel());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+        frame.setVisible(true);
     }
 }
