@@ -235,9 +235,40 @@ public class SQLModule {
 
     }
 
-    public static void deleteRow(String tableName, String primaryKeyColumn, String primaryKey){
+    public static int deleteRow(String tableName, String[] pK, String[] columns, String[] values, String[] types){
        // DELETE FROM tableName WHERE primaryKeyColumn = primaryKey;
-
+        try {
+            stmt = null;
+            stmt = con.createStatement();
+            String query = "DELETE FROM ";
+            query = query.concat(tableName);
+            query = query.concat(" WHERE ");
+            for (int i = 0; i < pK.length; i++) {
+                for (int j = 0; j < columns.length; j++) {
+                    if (pK[i].equals(columns[j])) {
+                        query = query.concat(pK[i] + "=");
+                        switch (types[j]) {
+                            case "VARCHAR":
+                                query = query.concat("\'" + values[j] + "\'");
+                                break;
+                            default:
+                                query = query.concat(values[j]);
+                        }
+                        break;
+                    }
+                }
+                if (i < pK.length - 1) {
+                    query = query.concat(" AND ");
+                }
+            }
+            int changes = stmt.executeUpdate(query);
+            stmt.close();
+            return changes;
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     // SEPARATE FUNCTION FOR COMMIT?
