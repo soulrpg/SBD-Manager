@@ -2,6 +2,7 @@ package sbd;
 import sbd.GUI.Constants;
 import sbd.GUI.LoginScreen;
 import sbd.GUI.Screen;
+import sbd.SQLModule;
 
 import javax.swing.*;
 
@@ -17,6 +18,9 @@ public class Main {
     }
 
     public static void main(String[] args){
+        SQLModule.startConnection();
+        SQLModule.select("SELECT nazwisko, placa_pod FROM pracownicy");
+
         currentScreen = new LoginScreen();
         frame = new JFrame("System baz danych");
         frame.setContentPane(currentScreen.getPanel());
