@@ -8,7 +8,7 @@ import javax.swing.*;
 
 public class Main {
     static private Screen currentScreen;
-    static private JFrame frame;
+    static public JFrame frame;
 
     public static void changeScreen(Screen newScreen){
         currentScreen = newScreen;
@@ -18,8 +18,8 @@ public class Main {
     }
 
     public static void main(String[] args){
-        SQLModule.startConnection();
-        SQLModule.select("SELECT nazwisko, placa_pod FROM pracownicy");
+        //SQLModule.startConnection();
+        //SQLModule.select("SELECT nazwisko, placa_pod FROM pracownicy");
 
         currentScreen = new LoginScreen();
         frame = new JFrame("System baz danych");

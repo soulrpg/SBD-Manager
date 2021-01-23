@@ -1,6 +1,7 @@
 package sbd.GUI;
 
 import sbd.Main;
+import sbd.SQLModule;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -22,8 +23,15 @@ public class LoginScreen implements Screen, ActionListener {
 
     public void actionPerformed(ActionEvent e){
         if(e.getActionCommand() == "Loguj"){
-            System.out.println("Loguj!");
-            Main.changeScreen(new MainWindow());
+            if(SQLModule.startConnection(username.getText(), password.getText())){
+                Main.changeScreen(new MainWindow());
+            }
+            else{
+                JOptionPane.showMessageDialog(Main.frame,
+                        "Połączenie z bazą danych nie udało się.",
+                        "Inane warning",
+                        JOptionPane.WARNING_MESSAGE);
+            }
         }
     }
 }

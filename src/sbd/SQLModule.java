@@ -10,7 +10,7 @@ public class SQLModule {
     private static Statement stmt;
 
     // Returns true when succeeds and false when not
-    public static boolean startConnection(){
+    public static boolean startConnection(String user, String password){
         System.out.println("Try connecting to database...");
         try {
             jdbc = Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -20,8 +20,9 @@ public class SQLModule {
         }
         try {
             con = DriverManager.getConnection("jdbc:oracle:thin:@//admlab2.cs.put.poznan.pl:1521/dblab02_students.cs.put.poznan.pl",
-                    "scott", "tiger");
+                    user, password);
             System.out.println("Connection to database successful!");
+            con.setAutoCommit(false);
             return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -68,12 +69,12 @@ public class SQLModule {
     }
 
     // Get column names of table (because we don't get them when we are using selectAll()
-    public ResultSet getColumnNames(String tableName){
+    public static ResultSet getColumnNames(String tableName){
         stmt = null;
         rs = null;
-        String query = "Select COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME=";
-        query.concat(tableName);
-        query.concat(";");
+        String query = "select COLUMN_NAME from user_tab_columns where table_name=";
+        query = query.concat(tableName);
+        //query = query.concat(";");
         try{
             stmt = con.createStatement();
             rs = stmt.executeQuery(query);
@@ -85,27 +86,27 @@ public class SQLModule {
     }
 
     // Select whole table with conditions defined in three filter tables
-    public ResultSet selectAll(String tableName, String[] filterColumn, String[] filterOperator, String[] filterValue){
+    public static ResultSet selectAll(String tableName, String[] filterColumn, String[] filterOperator, String[] filterValue){
         stmt = null;
         rs = null;
         String query = "Select * FROM ";
-        query.concat(tableName);
+        query = query.concat(tableName);
         if(filterColumn.length == filterOperator.length &&  filterOperator.length ==  filterValue.length &&
         filterValue.length > 0){
-            query.concat(" WHERE ");
+            query = query.concat(" WHERE ");
             for(int i = 0; i < filterColumn.length; i++){
-                query.concat(filterColumn[i]);
-                query.concat(filterOperator[i]);
-                query.concat(filterValue[i]);
+                query = query.concat(filterColumn[i] + " ");
+                query = query.concat(filterOperator[i]);
+                query = query.concat(filterValue[i]);
                 if(i < filterColumn.length - 1){
-                    query.concat(" AND ");
+                    query = query.concat(" AND ");
                 }
             }
         }
         else{
             System.out.println("Filter arguments not used");
         }
-        query.concat(";");
+        //query.concat(";");
         try{
             stmt = con.createStatement();
             rs = stmt.executeQuery(query);
@@ -118,14 +119,14 @@ public class SQLModule {
 
     // Select used when we need to create dropdown list for updating foreign keys in table
     // Just feed those values to dropdown list
-    public ResultSet selectColumn(String tableName, String columnName){
-        Statement stmt = null;
-        ResultSet rs = null;
+    public static ResultSet selectColumn(String tableName, String columnName){
+        stmt = null;
+        rs = null;
         String query = "Select ";
-        query.concat(columnName);
-        query.concat(" FROM ");
-        query.concat(tableName);
-        query.concat(";");
+        query = query.concat(columnName);
+        query = query.concat(" FROM ");
+        query = query.concat(tableName);
+        query = query.concat(";");
         try{
             stmt = con.createStatement();
             rs = stmt.executeQuery(query);
@@ -137,7 +138,7 @@ public class SQLModule {
     }
 
     // Needs to be invoked after each statement
-    public void close(){
+    public static void close(){
         try{
             rs.close();
             stmt.close();
@@ -150,19 +151,111 @@ public class SQLModule {
 
     // Mozliwe ze trzeba tu przekazywac typ kazdej kolumny jeszcze skoro values sa przekazywane stringami
     // ALbo switch dla każdego table name
-    public void insertRow(String tableName, String[] values){
+    public static int insertRow(String tableName, String[] values, String[] types){
+        try {
+            stmt = null;
+            stmt = con.createStatement();
+            String query = "INSERT INTO ";
+            query = query.concat(tableName);
+            query = query.concat(" VALUES(");
+            for(int i = 0; i < values.length; i++){
+                switch(types[i]){
+                    case "VARCHAR":
+                        query = query.concat("\'" + values[i] +"\'");
+                        break;
+                    default:
+                        query = query.concat(values[i]);
+                }
+                if(i < values.length - 1)
+                    query = query.concat(",");
+            }
+            query = query.concat(")");
+            int changes = stmt.executeUpdate(query);
+            stmt.close();
+            return changes;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public static int updateRow(String tableName, String[] pK, String[] columns, String[] values, String[] oldValues, String[] types){
+        try{
+            stmt = null;
+            stmt = con.createStatement();
+            String query = "UPDATE ";
+            query = query.concat(tableName);
+            query = query.concat(" SET ");
+            for(int i = 0; i < columns.length; i++){
+                if(oldValues[i].equals(values[i]))
+                    continue;
+                query = query.concat(columns[i] + "=");
+                switch(types[i]){
+                    case "VARCHAR":
+                        query = query.concat("\'" + values[i] +"\'");
+                        break;
+                    default:
+                        query = query.concat(values[i]);
+                }
+                if(i < columns.length - 1){
+                    query = query.concat(", ");
+                }
+            }
+            if(query.endsWith(", ")){
+                query = query.substring(0, query.length() - 2);
+            }
+            query = query.concat(" WHERE ");
+            for(int i = 0; i < pK.length; i++){
+                for(int j = 0; j < columns.length; j++){
+                    if(pK[i].equals(columns[j])){
+                        query = query.concat(pK[i] + "=");
+                        switch(types[j]){
+                            case "VARCHAR":
+                                query = query.concat("\'" + oldValues[j] +"\'");
+                                break;
+                            default:
+                                query = query.concat(oldValues[j]);
+                        }
+                        break;
+                    }
+                }
+                if(i < pK.length - 1){
+                    query = query.concat(" AND ");
+                }
+            }
+
+            int changes = stmt.executeUpdate(query);
+            stmt.close();
+            return changes;
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            return -1;
+        }
 
     }
 
-    public void updateRow(String tableName, String primaryKey, String[] columnNames, String[] values){
-
-    }
-
-    public void deleteRow(String tableName, String primaryKey){
+    public static void deleteRow(String tableName, String primaryKeyColumn, String primaryKey){
+       // DELETE FROM tableName WHERE primaryKeyColumn = primaryKey;
 
     }
 
     // SEPARATE FUNCTION FOR COMMIT?
+    public static void commit(){
+        try {
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void rollback(){
+        try {
+            con.rollback();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }
