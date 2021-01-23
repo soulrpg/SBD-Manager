@@ -54,6 +54,7 @@ public class Magazyny extends MainWindow implements Screen {
         dataTypes = new String[]{"NUMBER", "VARCHAR"};
         tableName = "MAGAZYNY";
         pK = new String[]{"NAZWA"};
+        fK = new String[][]{{"X"},{"Y"}};
         createTable();
     }
 

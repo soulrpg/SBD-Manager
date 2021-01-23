@@ -28,6 +28,7 @@ public class MainWindow implements Screen, ActionListener {
     protected Table selectTable;
     protected String[] dataTypes;
     protected String[] pK;
+    protected String[][] fK;
 
     protected List<String> columnNames;
     protected String tableName;
