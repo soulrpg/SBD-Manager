@@ -147,6 +147,9 @@ public class SQLModule {
         }
     }
 
+
+    // Mozliwe ze trzeba tu przekazywac typ kazdej kolumny jeszcze skoro values sa przekazywane stringami
+    // ALbo switch dla każdego table name
     public void insertRow(String tableName, String[] values){
 
     }

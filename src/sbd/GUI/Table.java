@@ -2,6 +2,7 @@ package sbd.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,14 @@ public class Table{
         for(int i = 0; i < data.size(); i++){
             rData[i] = data.get(i).toArray(new String[0]);
         }
+        return rData;
+    }
+
+    private String[][] loadData(ResultSet rs){
+        List<List<String>> data = new ArrayList<>();
+        String[][] rData;
+        //
+        rData = new String[data.size()][data.get(0).size()];
         return rData;
     }
 
