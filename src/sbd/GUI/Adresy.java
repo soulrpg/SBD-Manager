@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Kurierzy extends MainWindow implements Screen {
+public class Adresy extends MainWindow implements Screen {
     private JButton filtruj;
     private JButton dodaj;
     private JButton aktualizuj;
@@ -40,7 +40,7 @@ public class Kurierzy extends MainWindow implements Screen {
 
     // Trzeba dodac dodawanie pola JTable z klasy Table do tablePanel. Takze okodowac reszte actionPerformed()
 
-    public Kurierzy(){
+    public Adresy(){
         //super(); super() does not work there
         magazyny.addActionListener(this);
         klienci.addActionListener(this);
@@ -59,10 +59,10 @@ public class Kurierzy extends MainWindow implements Screen {
         anuluj.addActionListener(this);
         zatwierdz.addActionListener(this);
         usuń.addActionListener(this);
-        dataTypes = new String[]{"KLIENT_SEQ", "VARCHAR", "VARCHAR", "VARCHAR"};
-        tableName = "KLIENCI";
-        pK = new String[]{"ID_KLIENTA"};
-        fK = new String[][]{};
+        dataTypes = new String[]{"ADRES_SEQ", "VARCHAR", "NUMBER", "NUMBER", "VARCHAR", "VARCHAR", "NUMBER"};
+        tableName = "ADRESY";
+        pK = new String[]{"ID_ADRESU"};
+        fK = new String[][]{{"ID_MIEJSCOWOSCI","MIEJSCOWOSCI","ID_MIEJSCOWOSCI"}};
         createTable();
     }
 

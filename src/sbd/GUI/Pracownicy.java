@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Kurierzy extends MainWindow implements Screen {
+public class Pracownicy extends MainWindow implements Screen {
     private JButton filtruj;
     private JButton dodaj;
     private JButton aktualizuj;
@@ -40,7 +40,7 @@ public class Kurierzy extends MainWindow implements Screen {
 
     // Trzeba dodac dodawanie pola JTable z klasy Table do tablePanel. Takze okodowac reszte actionPerformed()
 
-    public Kurierzy(){
+    public Pracownicy(){
         //super(); super() does not work there
         magazyny.addActionListener(this);
         klienci.addActionListener(this);
@@ -59,10 +59,15 @@ public class Kurierzy extends MainWindow implements Screen {
         anuluj.addActionListener(this);
         zatwierdz.addActionListener(this);
         usuń.addActionListener(this);
-        dataTypes = new String[]{"KLIENT_SEQ", "VARCHAR", "VARCHAR", "VARCHAR"};
-        tableName = "KLIENCI";
-        pK = new String[]{"ID_KLIENTA"};
-        fK = new String[][]{};
+        //imie,nazwisko,data urodzenia, pesel, pensja, data zatrudnienia, etat, nazwa magazynu,
+        // (pracownik biurowy)dzial,
+        //(kurierzy) rozpoczecie pracy, zakonczenie pracy, id_regionu,
+        dataTypes = new String[]{"VARCHAR","VARCHAR","DATE","VARCHAR","NUMBER","DATE","VARCHAR","VARCHAR","VARCHAR",
+        "VARCHAR",
+        "TIMESTAMP", "TIMESTAMP", "NUMBER"};
+        tableName = "PRACOWNICY";
+        pK = new String[]{"PESEL"};
+        fK = new String[][]{{"NAZWA_MAGAZYNU","MAGAZYNY","NAZWA"},{"ID_REGIONU","REGIONY","ID_REGIONU"}};
         createTable();
     }
 
