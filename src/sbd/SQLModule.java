@@ -33,8 +33,8 @@ public class SQLModule {
     public static void endConnection(){
         try {
             con.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -126,7 +126,6 @@ public class SQLModule {
         query = query.concat(columnName);
         query = query.concat(" FROM ");
         query = query.concat(tableName);
-        query = query.concat(";");
         try{
             stmt = con.createStatement();
             rs = stmt.executeQuery(query);
@@ -163,8 +162,19 @@ public class SQLModule {
                     case "VARCHAR":
                         query = query.concat("\'" + values[i] +"\'");
                         break;
+                    case "DATE":
+                        query = query.concat("TO_DATE(\'" + values[i] + "\',\'DD/MM/YYYY\')");
+                        break;
+                    case "TIMESTAMP":
+                        //TIMESTAMP 'YYYY-MM-DD HH24:MI:SS.FF'
+                        query = query.concat("TIMESTAMP \'" + values[i] + "\'");
+                        break;
                     default:
-                        query = query.concat(values[i]);
+                        if(types[i].contains("SEQ")){
+                            query = query.concat(types[i] + ".NEXTVAL");
+                        }
+                        else
+                            query = query.concat(values[i]);
                 }
                 if(i < values.length - 1)
                     query = query.concat(",");
@@ -194,6 +204,13 @@ public class SQLModule {
                     case "VARCHAR":
                         query = query.concat("\'" + values[i] +"\'");
                         break;
+                    case "DATE":
+                        query = query.concat("TO_DATE(\'" + values[i] + "\',\'DD/MM/YYYY\')");
+                        break;
+                    case "TIMESTAMP":
+                        //TIMESTAMP 'YYYY-MM-DD HH24:MI:SS.FF'
+                        query = query.concat("TIMESTAMP \'" + values[i] + "\'");
+                        break;
                     default:
                         query = query.concat(values[i]);
                 }
@@ -212,6 +229,13 @@ public class SQLModule {
                         switch(types[j]){
                             case "VARCHAR":
                                 query = query.concat("\'" + oldValues[j] +"\'");
+                                break;
+                            case "DATE":
+                                query = query.concat("TO_DATE(\'" + oldValues[j] + "\',\'DD/MM/YYYY\'");
+                                break;
+                            case "TIMESTAMP":
+                                //TIMESTAMP 'YYYY-MM-DD HH24:MI:SS.FF'
+                                query = query.concat("TIMESTAMP \'" + oldValues[j] + "\'");
                                 break;
                             default:
                                 query = query.concat(oldValues[j]);

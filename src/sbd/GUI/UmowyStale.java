@@ -1,17 +1,14 @@
 package sbd.GUI;
 
-import sbd.Main;
 import sbd.SQLModule;
 
-import java.awt.*;
-import java.sql.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
-public class Magazyny extends MainWindow implements Screen {
+public class UmowyStale extends MainWindow implements Screen {
     private JButton filtruj;
     private JButton dodaj;
     private JButton aktualizuj;
@@ -43,7 +40,7 @@ public class Magazyny extends MainWindow implements Screen {
 
     // Trzeba dodac dodawanie pola JTable z klasy Table do tablePanel. Takze okodowac reszte actionPerformed()
 
-    public Magazyny(){
+    public UmowyStale(){
         //super(); super() does not work there
         magazyny.addActionListener(this);
         klienci.addActionListener(this);
@@ -62,10 +59,10 @@ public class Magazyny extends MainWindow implements Screen {
         anuluj.addActionListener(this);
         zatwierdz.addActionListener(this);
         usuń.addActionListener(this);
-        dataTypes = new String[]{"NUMBER", "VARCHAR"};
-        tableName = "MAGAZYNY";
-        pK = new String[]{"NAZWA"};
-        fK = new String[][]{{"X"},{"Y"}};
+        dataTypes = new String[]{"DATE", "VARCHAR", "UMOWA_SEQ", "NUMBER"};
+        tableName = "UMOWY_STALE";
+        pK = new String[]{"ID_UMOWY"};
+        fK = new String[][]{{"ID_KLIENTA", "KLIENCI", "ID_KLIENTA"}};
         createTable();
     }
 

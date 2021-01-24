@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class MainWindow implements Screen, ActionListener {
     protected Table selectTable;
     protected String[] dataTypes;
     protected String[] pK;
+    // {"field name in this table, original table name, field name in original table"}
     protected String[][] fK;
 
     protected List<String> columnNames;
@@ -55,14 +57,13 @@ public class MainWindow implements Screen, ActionListener {
     }
 
     public void actionPerformed(ActionEvent e){
-        System.out.println("test");
         if(e.getActionCommand() == "Magazyny"){
             System.out.println("Magazyny!");
             Main.changeScreen(new Magazyny());
         }
         if(e.getActionCommand() == "Klienci"){
             System.out.println("Klienci!");
-            //Main.changeScreen(new MainWindow());
+            Main.changeScreen(new Klienci());
         }
         if(e.getActionCommand() == "Przesyłki"){
             System.out.println("Przesyłki!");
@@ -78,7 +79,7 @@ public class MainWindow implements Screen, ActionListener {
         }
         if(e.getActionCommand() == "Umowy Stałe"){
             System.out.println("Umowy stałe!");
-            //Main.changeScreen(new MainWindow());
+            Main.changeScreen(new UmowyStale());
         }
         if(e.getActionCommand() == "Regiony"){
             System.out.println("Regiony!");
@@ -98,12 +99,14 @@ public class MainWindow implements Screen, ActionListener {
         }
         if(e.getActionCommand() == "Wyloguj"){
             System.out.println("Wyloguj!");
+            SQLModule.endConnection();
+            Main.changeScreen(new LoginScreen());
             //Main.changeScreen(new MainWindow());
         }
     }
 
 
-    public int showInsertWindow(){
+    /*public int showInsertWindow(){
         // Show message dialog with question and anwsers
         JPanel popupPanel = new JPanel();
         popupPanel.setLayout(new BoxLayout(popupPanel, BoxLayout.Y_AXIS));
@@ -120,6 +123,63 @@ public class MainWindow implements Screen, ActionListener {
         List<String> values = new ArrayList<String>();
         for(JTextField input : inputs){
             values.add(input.getText());
+        }
+        if(SQLModule.insertRow(tableName, values.toArray(new String[0]), dataTypes) > 0){
+            refreshTable();
+            return 0;
+        }
+        return -1;
+    }*/
+
+    public int showInsertWindow(){
+        // Show message dialog with question and anwsers
+        JPanel popupPanel = new JPanel();
+        popupPanel.setLayout(new BoxLayout(popupPanel, BoxLayout.Y_AXIS));
+        JLabel[] label = new JLabel[columnNames.size()];
+        JComponent[] inputs = new JComponent[columnNames.size()];
+        for(int i = 0; i < columnNames.size(); i++){
+            label[i] = new JLabel();
+            label[i].setText(columnNames.get(i));
+            popupPanel.add(label[i]);
+            boolean isfK = false;
+            for(int j = 0; j < fK.length; j++){
+                if(columnNames.get(i).equals(fK[j][0])){
+                    inputs[i] = new JComboBox();
+                    try{
+                        ResultSet rs = SQLModule.selectColumn(fK[j][1], fK[j][2]);
+                        while(rs.next()){
+                            if(inputs[i] instanceof JComboBox){
+                                JComboBox box = (JComboBox) inputs[i];
+                                box.addItem(rs.getString(1));
+                            }
+                        }
+                        SQLModule.close();
+                    }
+                    catch(SQLException e){
+                        e.printStackTrace();
+                    }
+
+                    isfK = true;
+                    break;
+                }
+            }
+            if(!isfK){
+                inputs[i] = new JTextField();
+                if(dataTypes[i].contains("SEQ")){
+                    ((JTextField)inputs[i]).setEnabled(false);
+                }
+            }
+            popupPanel.add(inputs[i]);
+        }
+        JOptionPane.showMessageDialog(null, popupPanel, "Insert", JOptionPane.PLAIN_MESSAGE);
+        List<String> values = new ArrayList<String>();
+        for(JComponent input : inputs){
+            if(input instanceof JComboBox){
+                values.add((String)((JComboBox)input).getItemAt(((JComboBox)input).getSelectedIndex()));
+            }
+            else if(input instanceof JTextField){
+                values.add(((JTextField)input).getText());
+            }
         }
         if(SQLModule.insertRow(tableName, values.toArray(new String[0]), dataTypes) > 0){
             refreshTable();
@@ -173,19 +233,48 @@ public class MainWindow implements Screen, ActionListener {
         JPanel popupPanel = new JPanel();
         popupPanel.setLayout(new BoxLayout(popupPanel, BoxLayout.Y_AXIS));
         JLabel[] label = new JLabel[columnNames.size()];
-        JTextField[] inputs = new JTextField[columnNames.size()];
+        JComponent[] inputs = new JComponent[columnNames.size()];
         for(int i = 0; i < columnNames.size(); i++){
             label[i] = new JLabel();
             label[i].setText(columnNames.get(i));
             popupPanel.add(label[i]);
-            inputs[i] = new JTextField();
-            inputs[i].setText(oldValues[i]);
+            boolean isfK = false;
+            for(int j = 0; j < fK.length; j++){
+                if(columnNames.get(i).equals(fK[j][0])){
+                    inputs[i] = new JComboBox();
+                    try{
+                        ResultSet rs = SQLModule.selectColumn(fK[j][1], fK[j][2]);
+                        while(rs.next()){
+                            if(inputs[i] instanceof JComboBox){
+                                JComboBox box = (JComboBox) inputs[i];
+                                box.addItem(rs.getString(1));
+                                box.setSelectedItem(oldValues[i]);
+                            }
+                        }
+                        SQLModule.close();
+                    }
+                    catch(SQLException e){
+                        e.printStackTrace();
+                    }
+                    isfK = true;
+                    break;
+                }
+            }
+            if(!isfK){
+                inputs[i] = new JTextField();
+                ((JTextField)inputs[i]).setText(oldValues[i]);
+            }
             popupPanel.add(inputs[i]);
         }
         JOptionPane.showMessageDialog(null, popupPanel, "Update", JOptionPane.PLAIN_MESSAGE);
         List<String> values = new ArrayList<String>();
-        for(JTextField input : inputs){
-            values.add(input.getText());
+        for(JComponent input : inputs){
+            if(input instanceof JComboBox){
+                values.add((String)((JComboBox)input).getItemAt(((JComboBox)input).getSelectedIndex()));
+            }
+            else if(input instanceof JTextField){
+                values.add(((JTextField)input).getText());
+            }
         }
         boolean anyChange = false;
         for(int i = 0; i < values.size(); i++){
