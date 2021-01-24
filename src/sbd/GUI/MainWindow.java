@@ -25,6 +25,9 @@ public class MainWindow implements Screen, ActionListener {
     private JButton problemy;
     private JButton wyloguj;
     private JPanel mainPanel;
+    private JButton listyPButton;
+    private JButton kurierzyButton;
+    private JButton magazynierzyButton;
 
     protected Table selectTable;
     protected String[] dataTypes;
