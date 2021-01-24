@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Przesyłki extends MainWindow implements Screen {
+public class Kurierzy extends MainWindow implements Screen {
     private JButton filtruj;
     private JButton dodaj;
     private JButton aktualizuj;
@@ -28,6 +28,9 @@ public class Przesyłki extends MainWindow implements Screen {
     private JPanel mainPanel;
     private JButton zatwierdz;
     private JButton anuluj;
+    private JButton magazynierzy;
+    private JButton kurierzy;
+    private JButton listyP;
     //private Table selectTable;
     //private String[] dataTypes;
     //private String[] pK;
@@ -40,7 +43,7 @@ public class Przesyłki extends MainWindow implements Screen {
 
     // Trzeba dodac dodawanie pola JTable z klasy Table do tablePanel. Takze okodowac reszte actionPerformed()
 
-    public Przesyłki(){
+    public Kurierzy(){
         //super(); super() does not work there
         magazyny.addActionListener(this);
         klienci.addActionListener(this);
@@ -59,10 +62,17 @@ public class Przesyłki extends MainWindow implements Screen {
         anuluj.addActionListener(this);
         zatwierdz.addActionListener(this);
         usuń.addActionListener(this);
-        dataTypes = new String[]{"VARCHAR", "PRZESYLKA_SEQ", "NUMBER", "VARCHAR", "VARCHAR", "VARCHAR"};
-        tableName = "PRZESYLKI";
-        pK = new String[]{"ID_PRZESYLKI"};
-        fK = new String[][]{{"PESEL_KURIERA","PRACOWNICY","PESEL"},{"PESEL_MAGAZYNIERA","PRACOWNICY","PESEL"},{"NAZWA_MAGAZYNU","MAGAZYNY","NAZWA"}};
+        magazynierzy.addActionListener(this);
+        kurierzy.addActionListener(this);
+        listyP.addActionListener(this);
+        //imie,nazwisko,data urodzenia, pesel, pensja, data zatrudnienia, etat, nazwa magazynu,
+        // (pracownik biurowy)dzial,
+        //(kurierzy) rozpoczecie pracy, zakonczenie pracy, id_regionu,
+        dataTypes = new String[]{"VARCHAR","VARCHAR","DATE","VARCHAR","NUMBER","DATE","VARCHAR","TIMESTAMP","TIMESTAMP",
+                "NUMBER", "VARCHAR"};
+        tableName = "KURIERZY";
+        pK = new String[]{"PESEL"};
+        fK = new String[][]{{"NAZWA_MAGAZYNU","MAGAZYNY","NAZWA"},{"ID_REGIONU","REGIONY","ID_REGIONU"}};
         createTable();
     }
 

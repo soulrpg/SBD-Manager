@@ -1,5 +1,6 @@
 package sbd.GUI;
 
+import sbd.Main;
 import sbd.SQLModule;
 
 import javax.swing.*;
@@ -9,10 +10,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Problemy extends MainWindow implements Screen {
-    private JButton filtruj;
-    private JButton dodaj;
-    private JButton aktualizuj;
-    private JButton usuń;
     private JScrollPane tablePanel;
     private JButton magazyny;
     private JButton klienci;
@@ -26,8 +23,11 @@ public class Problemy extends MainWindow implements Screen {
     private JButton problemy;
     private JButton wyloguj;
     private JPanel mainPanel;
-    private JButton zatwierdz;
-    private JButton anuluj;
+    private JButton magazynierzy;
+    private JButton kurierzy;
+    private JButton listyP;
+    private JButton ustaw;
+    private JTextField prog;
     //private Table selectTable;
     //private String[] dataTypes;
     //private String[] pK;
@@ -53,15 +53,14 @@ public class Problemy extends MainWindow implements Screen {
         reklamacje.addActionListener(this);
         problemy.addActionListener(this);
         wyloguj.addActionListener(this);
-        filtruj.addActionListener(this);
-        dodaj.addActionListener(this);
-        aktualizuj.addActionListener(this);
-        anuluj.addActionListener(this);
-        zatwierdz.addActionListener(this);
-        usuń.addActionListener(this);
-        dataTypes = new String[]{"KLIENT_SEQ", "VARCHAR", "VARCHAR", "VARCHAR"};
+        magazynierzy.addActionListener(this);
+        kurierzy.addActionListener(this);
+        listyP.addActionListener(this);
+        ustaw.addActionListener(this);
+
+        dataTypes = new String[]{"VARCHAR", "VARCHAR", "NUMBER", "NUMBER", "PROBLEM_SEQ"};
         tableName = "PROBLEMY";
-        pK = new String[]{"ID_KLIENTA"};
+        pK = new String[]{"ID_PROBLEMU"};
         fK = new String[][]{};
         createTable();
     }
@@ -119,6 +118,22 @@ public class Problemy extends MainWindow implements Screen {
         if (e.getActionCommand() == "Zatwierdź") {
             System.out.println("Zatwierdź!");
             SQLModule.commit();
+        }
+        if(e.getActionCommand() == "Ustaw"){
+            try{
+                float threshold = Float.parseFloat(prog.getText());
+                if(threshold < 0 || threshold > 1){
+                    throw new NumberFormatException("Zły zasięg!");
+                }
+                SQLModule.getProblems(threshold);
+                createTable();
+            }
+            catch(NumberFormatException n){
+                JOptionPane.showMessageDialog(Main.frame,
+                        "Nie podano wartości liczbowej 0-1.",
+                        "Błąd",
+                        JOptionPane.WARNING_MESSAGE);
+            }
         }
     }
 

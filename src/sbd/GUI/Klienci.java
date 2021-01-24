@@ -28,6 +28,9 @@ public class Klienci extends MainWindow implements Screen {
     private JPanel mainPanel;
     private JButton zatwierdz;
     private JButton anuluj;
+    private JButton magazynierzy;
+    private JButton kurierzy;
+    private JButton listyP;
     //private Table selectTable;
     //private String[] dataTypes;
     //private String[] pK;
@@ -59,6 +62,9 @@ public class Klienci extends MainWindow implements Screen {
         anuluj.addActionListener(this);
         zatwierdz.addActionListener(this);
         usuń.addActionListener(this);
+        magazynierzy.addActionListener(this);
+        kurierzy.addActionListener(this);
+        listyP.addActionListener(this);
         dataTypes = new String[]{"KLIENT_SEQ", "VARCHAR", "VARCHAR", "VARCHAR"};
         tableName = "KLIENCI";
         pK = new String[]{"ID_KLIENTA"};

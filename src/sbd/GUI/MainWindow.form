@@ -101,15 +101,15 @@
           <text value="Wyloguj"/>
         </properties>
       </component>
-      <component id="4b8fa" class="javax.swing.JButton" binding="listyPButton" default-binding="true">
+      <component id="4b8fa" class="javax.swing.JButton" binding="listyP">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Listy p."/>
+          <text value="Listy p"/>
         </properties>
       </component>
-      <component id="4ffe3" class="javax.swing.JButton" binding="kurierzyButton" default-binding="true">
+      <component id="4ffe3" class="javax.swing.JButton" binding="kurierzy">
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -117,7 +117,7 @@
           <text value="Kurierzy"/>
         </properties>
       </component>
-      <component id="5ddea" class="javax.swing.JButton" binding="magazynierzyButton" default-binding="true">
+      <component id="5ddea" class="javax.swing.JButton" binding="magazynierzy">
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>

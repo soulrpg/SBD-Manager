@@ -28,6 +28,9 @@ public class Pracownicy extends MainWindow implements Screen {
     private JPanel mainPanel;
     private JButton zatwierdz;
     private JButton anuluj;
+    private JButton magazynierzy;
+    private JButton kurierzy;
+    private JButton listyP;
     //private Table selectTable;
     //private String[] dataTypes;
     //private String[] pK;
@@ -59,13 +62,16 @@ public class Pracownicy extends MainWindow implements Screen {
         anuluj.addActionListener(this);
         zatwierdz.addActionListener(this);
         usuń.addActionListener(this);
+        magazynierzy.addActionListener(this);
+        kurierzy.addActionListener(this);
+        listyP.addActionListener(this);
         //imie,nazwisko,data urodzenia, pesel, pensja, data zatrudnienia, etat, nazwa magazynu,
         // (pracownik biurowy)dzial,
         //(kurierzy) rozpoczecie pracy, zakonczenie pracy, id_regionu,
         dataTypes = new String[]{"VARCHAR","VARCHAR","DATE","VARCHAR","NUMBER","DATE","VARCHAR","VARCHAR","VARCHAR",
         "VARCHAR",
         "TIMESTAMP", "TIMESTAMP", "NUMBER"};
-        tableName = "PRACOWNICY";
+        tableName = "PRACOWNICY_BIUROWI";
         pK = new String[]{"PESEL"};
         fK = new String[][]{{"NAZWA_MAGAZYNU","MAGAZYNY","NAZWA"},{"ID_REGIONU","REGIONY","ID_REGIONU"}};
         createTable();

@@ -1,5 +1,6 @@
 package sbd;
 
+import javax.swing.*;
 import java.sql.*;
 import java.lang.*;
 
@@ -112,7 +113,25 @@ public class SQLModule {
             rs = stmt.executeQuery(query);
         }
         catch(SQLException e){
-            e.printStackTrace();
+            switch(e.getErrorCode()){
+                // WRONG OPERATOR
+                case 920:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Zły operator.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // INVALID IDENTIFIER
+                case 904:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Zła wartość filtra.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                default:
+                    e.printStackTrace();
+            }
+            return null;
         }
         return rs;
     }
@@ -151,6 +170,9 @@ public class SQLModule {
     // Mozliwe ze trzeba tu przekazywac typ kazdej kolumny jeszcze skoro values sa przekazywane stringami
     // ALbo switch dla każdego table name
     public static int insertRow(String tableName, String[] values, String[] types){
+        if(values == null){
+            return -1;
+        }
         try {
             stmt = null;
             stmt = con.createStatement();
@@ -158,6 +180,12 @@ public class SQLModule {
             query = query.concat(tableName);
             query = query.concat(" VALUES(");
             for(int i = 0; i < values.length; i++){
+                 if((values[i] == null || values[i].equals("")) && !types[i].contains("SEQ")){
+                     query = query.concat("NULL");
+                     if(i < values.length - 1)
+                         query = query.concat(",");
+                     continue;
+                }
                 switch(types[i]){
                     case "VARCHAR":
                         query = query.concat("\'" + values[i] +"\'");
@@ -184,7 +212,73 @@ public class SQLModule {
             stmt.close();
             return changes;
         } catch (SQLException e) {
-            e.printStackTrace();
+            switch(e.getErrorCode()){
+                    // MISSING EXPRESSION
+                case 936:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Nieuzupełnione dane.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // COLUMN NOT ALLOWED HERE
+                case 984:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Podano błędny typ wartości.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // CANNOT INSERT NULL INTO
+                case 1400:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Wymagane pole jest puste.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                case 1858:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Podano wartość nie-numeryczną, gdzie wymagana jest numeryczna.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                case 1839:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Podano nieistniejącą datę.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // Check constraint
+                case 2290:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Pole etap_przetworzenia przyjmuje jedynie wartości: DOSTARCZONO, W MAGAZYNIE, W DRODZE, CZEKA NA ZMAGAZYNOWANIE.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // Literal does not match
+                case 1861:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Źle podana wartość czasowa.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // YEAR error
+                case 1841:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Podano nieprawidłowy rok.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // MONTH error
+                    case 1843:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Podano nieprawidłowy miesiąc.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                default:
+                    System.out.println(e.getMessage());
+                    System.out.println(e.getErrorCode());
+                    e.printStackTrace();
+            }
         }
         return -1;
     }
@@ -196,23 +290,40 @@ public class SQLModule {
             String query = "UPDATE ";
             query = query.concat(tableName);
             query = query.concat(" SET ");
-            for(int i = 0; i < columns.length; i++){
-                if(oldValues[i].equals(values[i]))
+            for(int i = 0; i < columns.length; i++) {
+                if (oldValues[i] != null){
+                    if (oldValues[i].equals(values[i]))
+                        continue;
+                }
+                else if(values[i] == null){
                     continue;
+                }
                 query = query.concat(columns[i] + "=");
                 switch(types[i]){
                     case "VARCHAR":
-                        query = query.concat("\'" + values[i] +"\'");
+                        if(values[i].equals(""))
+                            query = query.concat("NULL");
+                        else
+                            query = query.concat("\'" + values[i] +"\'");
                         break;
                     case "DATE":
-                        query = query.concat("TO_DATE(\'" + values[i] + "\',\'DD/MM/YYYY\')");
+                        if(values[i].equals(""))
+                            query = query.concat("NULL");
+                        else
+                            query = query.concat("TO_DATE(\'" + values[i] + "\',\'DD/MM/YYYY\')");
                         break;
                     case "TIMESTAMP":
                         //TIMESTAMP 'YYYY-MM-DD HH24:MI:SS.FF'
-                        query = query.concat("TIMESTAMP \'" + values[i] + "\'");
+                        if(values[i].equals(""))
+                            query = query.concat("NULL");
+                        else
+                            query = query.concat("TIMESTAMP \'" + values[i] + "\'");
                         break;
                     default:
-                        query = query.concat(values[i]);
+                        if(values[i].equals(""))
+                            query = query.concat("NULL");
+                        else
+                            query = query.concat(values[i]);
                 }
                 if(i < columns.length - 1){
                     query = query.concat(", ");
@@ -253,7 +364,80 @@ public class SQLModule {
             return changes;
         }
         catch(SQLException e){
-            e.printStackTrace();
+            switch(e.getErrorCode()){
+                    // UNIQUE CONSTRAINT
+                case 1:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Istnieje już rekord o takim samym kluczu podstawowym.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // MISSING EXPRESSION
+                case 936:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Nieuzupełnione dane.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                // COLUMN NOT ALLOWED HERE
+                case 984:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Podano błędny typ wartości.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                // CANNOT INSERT NULL INTO
+                case 1400:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Wymagane pole jest puste.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                case 1858:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Podano wartość nie-numeryczną, gdzie wymagana jest numeryczna.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                case 1839:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Podano nieistniejącą datę.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                // Check constraint
+                case 2290:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Pole etap_przetworzenia przyjmuje jedynie wartości: DOSTARCZONO, W MAGAZYNIE, W DRODZE, CZEKA NA ZMAGAZYNOWANIE.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                // Literal does not match
+                case 1861:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Źle podana wartość czasowa.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                // YEAR error
+                case 1841:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Podano nieprawidłowy rok.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // MONTH error
+                case 1843:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Podano nieprawidłowy miesiąc.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                default:
+                    System.out.println(e.getMessage());
+                    System.out.println(e.getErrorCode());
+                    e.printStackTrace();
+            }
             return -1;
         }
 
@@ -290,7 +474,18 @@ public class SQLModule {
             return changes;
         }
         catch(SQLException e){
-            e.printStackTrace();
+            switch(e.getErrorCode()){
+                case 2292:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Naruszono odwołanie do do pola w innej tabeli. Wymagane usunięcie rekordu zawierającego odwołanie przed usunięciem wskazanego rekordu.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                default:
+                    System.out.println(e.getMessage());
+                    System.out.println(e.getErrorCode());
+                    e.printStackTrace();
+            }
             return -1;
         }
     }
@@ -312,5 +507,15 @@ public class SQLModule {
         }
     }
 
+    // Get problem for Problems table
+    public static void getProblems(float efficencyThreshold){
+        try (CallableStatement cstmt = con.prepareCall("{call WybierzProblemy(?)}")){
+            cstmt.setFloat(1, efficencyThreshold);
+            cstmt.execute();
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
 
 }

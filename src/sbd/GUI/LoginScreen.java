@@ -29,7 +29,7 @@ public class LoginScreen implements Screen, ActionListener {
             else{
                 JOptionPane.showMessageDialog(Main.frame,
                         "Połączenie z bazą danych nie udało się.",
-                        "Inane warning",
+                        "Błąd",
                         JOptionPane.WARNING_MESSAGE);
             }
         }

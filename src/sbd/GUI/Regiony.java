@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Regiony extends MainWindow implements Screen {
     private JButton filtruj;
@@ -28,15 +29,15 @@ public class Regiony extends MainWindow implements Screen {
     private JPanel mainPanel;
     private JButton zatwierdz;
     private JButton anuluj;
-    //private Table selectTable;
-    //private String[] dataTypes;
-    //private String[] pK;
+    private JButton magazynierzy;
+    private JButton kurierzy;
+    private JButton listyP;
+    private JCheckBox pokazRegiony;
+    private List<String> columnNamesVisible;
 
-    //private List<String> columnNames;
-    //private String tableName;
-    //private List<String> types = new ArrayList<String>();
-    //private List<String> values = new ArrayList<String>();
-    //private List<String> columns = new ArrayList<String>();
+    // Klasa wyswietla miejscowisci ale pozwala na insert/update/delete regionow
+    private String tableNameVisible;
+
 
     // Trzeba dodac dodawanie pola JTable z klasy Table do tablePanel. Takze okodowac reszte actionPerformed()
 
@@ -59,19 +60,30 @@ public class Regiony extends MainWindow implements Screen {
         anuluj.addActionListener(this);
         zatwierdz.addActionListener(this);
         usuń.addActionListener(this);
-        dataTypes = new String[]{"REGION_SEQ"};
+        magazynierzy.addActionListener(this);
+        kurierzy.addActionListener(this);
+        listyP.addActionListener(this);
+        pokazRegiony.addActionListener(this);
+        dataTypes = new String[]{"REGION_SEQ", "NUMBER"};
         tableName = "REGIONY";
         pK = new String[]{"ID_REGIONU"};
-        fK = new String[][]{};
+        fK = new String[][]{{"ID_MIEJSCOWOSCI", "MIEJSCOWOSCI", "ID_MIEJSCOWOSCI"}};
+
+        columnNames = new ArrayList<String>();
+        columnNames.add("ID_REGIONU");
+        columnNames.add("ID_MIEJSCOWOSCI");
+
+        tableNameVisible = "MIEJSCOWOSCI";
+
         createTable();
     }
 
     public void createTable(){
-        columnNames = new ArrayList<String>();
+        columnNamesVisible = new ArrayList<String>();
         try{
-            ResultSet rs = SQLModule.getColumnNames("\'" + tableName + "\'");
+            ResultSet rs = SQLModule.getColumnNames("\'" + tableNameVisible + "\'");
             while(rs.next()){
-                columnNames.add(rs.getString(1));
+                columnNamesVisible.add(rs.getString(1));
             }
             SQLModule.close();
             refreshTable();
@@ -120,12 +132,23 @@ public class Regiony extends MainWindow implements Screen {
             System.out.println("Zatwierdź!");
             SQLModule.commit();
         }
+        if(e.getActionCommand() == "Pokaż regiony"){
+            System.out.println("Pokaż regiony!");
+            if(pokazRegiony.getModel().isSelected()){
+                tableNameVisible = tableName;
+            }
+            else{
+                tableNameVisible = "MIEJSCOWOSCI";
+            }
+            createTable();
+        }
+        System.out.println(e.getActionCommand());
     }
 
     public void refreshTable(){
-        ResultSet rs = SQLModule.selectAll(tableName, columns.toArray(new String[0]), types.toArray(new String[0]),
+        ResultSet rs = SQLModule.selectAll(tableNameVisible, columns.toArray(new String[0]), types.toArray(new String[0]),
                 values.toArray(new String[0]));
-        selectTable = new Table(columnNames, rs);
+        selectTable = new Table(columnNamesVisible, rs);
         selectTable.table.setFillsViewportHeight(true);
         selectTable.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tablePanel.getViewport().add(selectTable.table);

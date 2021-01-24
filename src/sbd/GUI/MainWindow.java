@@ -25,9 +25,9 @@ public class MainWindow implements Screen, ActionListener {
     private JButton problemy;
     private JButton wyloguj;
     private JPanel mainPanel;
-    private JButton listyPButton;
-    private JButton kurierzyButton;
-    private JButton magazynierzyButton;
+    private JButton listyP;
+    private JButton kurierzy;
+    private JButton magazynierzy;
 
     protected Table selectTable;
     protected String[] dataTypes;
@@ -53,6 +53,9 @@ public class MainWindow implements Screen, ActionListener {
         reklamacje.addActionListener(this);
         problemy.addActionListener(this);
         wyloguj.addActionListener(this);
+        magazynierzy.addActionListener(this);
+        kurierzy.addActionListener(this);
+        listyP.addActionListener(this);
     }
 
     public JPanel getPanel(){
@@ -70,15 +73,15 @@ public class MainWindow implements Screen, ActionListener {
         }
         if(e.getActionCommand() == "Przesyłki"){
             System.out.println("Przesyłki!");
-            //Main.changeScreen(new MainWindow());
+            Main.changeScreen(new Przesylki());
         }
         if(e.getActionCommand() == "Adresy"){
             System.out.println("Adresy!");
-            //Main.changeScreen(new MainWindow());
+            Main.changeScreen(new Adresy());
         }
         if(e.getActionCommand() == "Pracownicy"){
             System.out.println("Pracownicy!!");
-            //Main.changeScreen(new MainWindow());
+            Main.changeScreen(new Pracownicy());
         }
         if(e.getActionCommand() == "Umowy Stałe"){
             System.out.println("Umowy stałe!");
@@ -86,19 +89,31 @@ public class MainWindow implements Screen, ActionListener {
         }
         if(e.getActionCommand() == "Regiony"){
             System.out.println("Regiony!");
-            //Main.changeScreen(new MainWindow());
+            Main.changeScreen(new Regiony());
         }
         if(e.getActionCommand() == "Samochody"){
             System.out.println("Samochody!");
-            //Main.changeScreen(new MainWindow());
+            Main.changeScreen(new Samochody());
         }
         if(e.getActionCommand() == "Reklamacje"){
             System.out.println("Reklamacje!");
-            //Main.changeScreen(new MainWindow());
+            Main.changeScreen(new Reklamacje());
         }
         if(e.getActionCommand() == "Problemy"){
             System.out.println("Problemy!");
-            //Main.changeScreen(new MainWindow());
+            Main.changeScreen(new Problemy());
+        }
+        if(e.getActionCommand() == "Listy p"){
+            System.out.println("Listy p!");
+            Main.changeScreen(new ListyPrzewozowe());
+        }
+        if(e.getActionCommand() == "Magazynierzy"){
+            System.out.println("Magazynierzy!");
+            Main.changeScreen(new Magazynierzy());
+        }
+        if(e.getActionCommand() == "Kurierzy"){
+            System.out.println("Kurierzy!");
+            Main.changeScreen(new Kurierzy());
         }
         if(e.getActionCommand() == "Wyloguj"){
             System.out.println("Wyloguj!");
@@ -281,7 +296,16 @@ public class MainWindow implements Screen, ActionListener {
         }
         boolean anyChange = false;
         for(int i = 0; i < values.size(); i++){
-            if(!values.get(i).equals(oldValues[i])){
+            if(oldValues[i] == null && values.get(i) == null){
+                continue;
+            }
+            else if(oldValues[i] == null && values.get(i).equals("")){
+                continue;
+            }
+            else if(oldValues[i] == null){
+                anyChange = true;
+            }
+            else if(!values.get(i).equals(oldValues[i])){
                 anyChange = true;
             }
         }
