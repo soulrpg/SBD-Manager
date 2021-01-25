@@ -185,6 +185,7 @@ public class MainWindow implements Screen, ActionListener {
                 inputs[i] = new JTextField();
                 if(dataTypes[i].contains("SEQ")){
                     ((JTextField)inputs[i]).setEnabled(false);
+                    ((JTextField)inputs[i]).setText("Wartość generowana automatycznie.");
                 }
             }
             popupPanel.add(inputs[i]);
@@ -281,6 +282,9 @@ public class MainWindow implements Screen, ActionListener {
             if(!isfK){
                 inputs[i] = new JTextField();
                 ((JTextField)inputs[i]).setText(oldValues[i]);
+                if(dataTypes[i].contains("SEQ")){
+                    ((JTextField)inputs[i]).setEnabled(false);
+                }
             }
             popupPanel.add(inputs[i]);
         }

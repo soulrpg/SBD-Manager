@@ -268,9 +268,23 @@ public class SQLModule {
                             JOptionPane.ERROR_MESSAGE);
                     break;
                     // MONTH error
-                    case 1843:
+                case 1843:
                     JOptionPane.showMessageDialog(Main.frame,
                             "Podano nieprawidłowy miesiąc.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // INPUt value wrong format
+                case 1840:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Zły format danej wejściowej.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // Za dluga wartosc
+                case 12899:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Przekroczono limit ilości znaków.",
                             "Błąd",
                             JOptionPane.ERROR_MESSAGE);
                     break;
@@ -430,6 +444,26 @@ public class SQLModule {
                 case 1843:
                     JOptionPane.showMessageDialog(Main.frame,
                             "Podano nieprawidłowy miesiąc.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    // INPUt value wrong format
+                case 1840:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Zły format danej wejściowej.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                case 2292:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Istnieje odwołanie w innej tabeli do edytowanej kolumny.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                // Za dluga wartosc
+                case 12899:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Przekroczono limit ilości znaków.",
                             "Błąd",
                             JOptionPane.ERROR_MESSAGE);
                     break;
