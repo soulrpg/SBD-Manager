@@ -222,13 +222,23 @@ public class MainWindow implements Screen, ActionListener {
         columnLabel[2] = new JLabel();
         columnLabel[2].setText("Wartość");
         popupPanel.add(columnLabel[2]);
-        JTextField[] inputsType = new JTextField[columnNames.size()];
+        JComboBox[] inputsType = new JComboBox[columnNames.size()];
         JTextField[] inputsValue = new JTextField[columnNames.size()];
         for(int i = 0; i < columnNames.size(); i++){
             label[i] = new JLabel();
             label[i].setText(columnNames.get(i));
             popupPanel.add(label[i]);
-            inputsType[i] = new JTextField();
+            inputsType[i] = new JComboBox();
+            inputsType[i].addItem("");
+            inputsType[i].addItem("=");
+            inputsType[i].addItem("!=");
+            inputsType[i].addItem("<=");
+            inputsType[i].addItem(">=");
+            inputsType[i].addItem(">");
+            inputsType[i].addItem("<");
+            inputsType[i].addItem("LIKE");
+            inputsType[i].addItem("IN");
+            //inputsType[i] = new JTextField();
             popupPanel.add(inputsType[i]);
             inputsValue[i] = new JTextField();
             popupPanel.add(inputsValue[i]);
@@ -238,8 +248,8 @@ public class MainWindow implements Screen, ActionListener {
         values = new ArrayList<String>();
         columns = new ArrayList<String>();
         for(int i = 0; i < columnNames.size(); i++){
-            if(inputsType[i].getText().length() > 0){
-                types.add(inputsType[i].getText());
+            if(((String)(inputsType[i].getItemAt(inputsType[i].getSelectedIndex()))).length() > 0){
+                types.add(((String)(inputsType[i].getItemAt(inputsType[i].getSelectedIndex()))));
                 columns.add(columnNames.get(i));
                 values.add(inputsValue[i].getText());
             }

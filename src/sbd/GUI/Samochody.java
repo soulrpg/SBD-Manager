@@ -66,10 +66,10 @@ public class Samochody extends MainWindow implements Screen {
         kurierzy.addActionListener(this);
         listyP.addActionListener(this);
 
-        dataTypes = new String[]{"VARCHAR", "VARCHAR", "NUMBER", "NUMBER", "TIMESTAMP","NUMBER","VARCHAR","VARCHAR"};
+        dataTypes = new String[]{"VARCHAR", "VARCHAR", "NUMBER", "TIMESTAMP","NUMBER","VARCHAR"};
         tableName = "SAMOCHODY";
         pK = new String[]{"NUMER_REJESTRACJI"};
-        fK = new String[][]{{"PESEL_KURIERA","PRACOWNICY","PESEL"}};
+        fK = new String[][]{{"PESEL_KURIERA","KURIERZY","PESEL"}};
         createTable();
     }
 

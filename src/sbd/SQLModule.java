@@ -97,7 +97,7 @@ public class SQLModule {
             query = query.concat(" WHERE ");
             for(int i = 0; i < filterColumn.length; i++){
                 query = query.concat(filterColumn[i] + " ");
-                query = query.concat(filterOperator[i]);
+                query = query.concat(filterOperator[i] + " ");
                 query = query.concat(filterValue[i]);
                 if(i < filterColumn.length - 1){
                     query = query.concat(" AND ");
@@ -271,6 +271,12 @@ public class SQLModule {
                 case 1843:
                     JOptionPane.showMessageDialog(Main.frame,
                             "Podano nieprawidłowy miesiąc.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+                    case 1847:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Źle podany dzień.",
                             "Błąd",
                             JOptionPane.ERROR_MESSAGE);
                     break;
@@ -448,6 +454,12 @@ public class SQLModule {
                             JOptionPane.ERROR_MESSAGE);
                     break;
                     // INPUt value wrong format
+                case 1847:
+                    JOptionPane.showMessageDialog(Main.frame,
+                            "Źle podany dzień.",
+                            "Błąd",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
                 case 1840:
                     JOptionPane.showMessageDialog(Main.frame,
                             "Zły format danej wejściowej.",
